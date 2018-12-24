@@ -3,3 +3,4 @@ pymessenger==0.0.7.0
 gunicorn==19.6.0
 tensorflow==1.12.0
 googletrans==2.4.0
+opencv-python==3.4.4.19
