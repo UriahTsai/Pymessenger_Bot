@@ -28,6 +28,8 @@ caption_model.load_weights("Image_Caption_Model_Weights.h5")
 
 img_model = applications.InceptionV3(weights = "imagenet", include_top=True, input_shape = (299, 299, 3))
 img_model = Model(inputs = img_model.input, outputs = img_model.layers[-2].output)
+print("Model Loaded")
+
 with open(tokenize_path, "rb") as fp:   # Unpickling
     tokenizer = load(fp)
 ############
