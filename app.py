@@ -20,6 +20,7 @@ max_length = 51
 #####
 json_file = open("Model_Structure.json")
 json_string = json.load(json_file)
+json_file.close()
 
 caption_model = model_from_json(json_string)
 caption_model.load_weights("Image_Caption_Model_Weights.h5")
