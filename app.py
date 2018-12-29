@@ -3,6 +3,7 @@ import random
 from pymessenger.bot import Bot
 #####
 import cv2
+import os
 import numpy as np
 from pickle import load
 import json
