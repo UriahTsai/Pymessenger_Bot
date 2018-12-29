@@ -18,7 +18,7 @@ from googletrans import Translator
 tokenize_path = "tokenizer_all_caps.pkl"
 max_length = 51
 #####
-json_file = open("Model_Strucutre.json")
+json_file = open("Model_Structure.json")
 json_string = json.load(json_file)
 
 caption_model = model_from_json(json_string)
