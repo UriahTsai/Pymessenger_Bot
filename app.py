@@ -1,12 +1,13 @@
 from flask import Flask , request
-import random 
+import random
 from pymessenger.bot import Bot
 #####
 import cv2
 import numpy as np
 from pickle import load
+import json
 from tensorflow.python.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.python.keras.models import load_model, Model
+from tensorflow.python.keras.models import Model , model_from_json
 from tensorflow.python.keras import applications
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.utils import to_categorical
@@ -14,11 +15,15 @@ from PIL import ImageFont, ImageDraw, Image
 import requests
 from googletrans import Translator
 ##############
-caption_model_path = "Large-BiLSTM-add-maxL51_valloss2.386_B1_0.742.h5"
 tokenize_path = "tokenizer_all_caps.pkl"
 max_length = 51
 #####
-caption_model = load_model(caption_model_path)
+json_file = open("Model_Strucutre.json")
+json_string = json.load(json_file)
+
+caption_model = model_from_json(json_string)
+caption_model.load_weights("Image_Caption_Model_Weights.h5")
+
 img_model = applications.InceptionV3(weights = "imagenet", include_top=True, input_shape = (299, 299, 3))
 img_model = Model(inputs = img_model.input, outputs = img_model.layers[-2].output)
 with open(tokenize_path, "rb") as fp:   # Unpickling
@@ -53,14 +58,14 @@ def receive_message():
                     if message["message"].get("text"):
                         response_sent_text = "https://scontent.xx.fbcdn.net/v/t1.15752-9/48269153_208016223421095_5548286354095341568_n.png?_nc_cat=106&_nc_ad=z-m&_nc_cid=0&_nc_ht=scontent.xx&oh=bdb21f0a3bc84508c4dcb5e7e91feb2a&oe=5C9EFD8D"
                         send_photo(recipient_id , response_sent_text)
-                        
+                    
                     if message["message"].get("attachments"):
                         response_sent_nontext = "Pending....."
                         send_message(recipient_id , response_sent_nontext)
-
+                        
                         print(message["message"])
                         print(message["message"]["attachments"][0]["payload"])
-
+                        
                         photo = download_photo(message["message"]["attachments"][0]["payload"]["url"])
                         print("Success Download")
                         
@@ -72,10 +77,10 @@ def receive_message():
                         print(translated.text)
                         print("Success Generation")
                         send_message(recipient_id , text)
-                        send_message(recipient_id , translated.text)                        
-    return "Message Processed"
-                        
-                
+                        send_message(recipient_id , translated.text)
+return "Message Processed"
+
+
 
 
 def download_photo(url):
@@ -141,7 +146,7 @@ def generate_desc_beam_search(self, model, photo, k):
     # self, model, tokenizer, photo, vocab_size, max_length, k
     in_text = 'startseq' # start the generation process
     seqe = [[list(), 1.0]]
-
+    
     for m in range(max_length):   # iterate over the whole length of the sequence
         if m == 0:
             yhat = self.next_word_prob(model, in_text, photo)
@@ -172,16 +177,16 @@ def generate_desc_beam_search(self, model, photo, k):
         seqe[i][0] = [text]
     return seqe
 def  model_predict(recipient_id , input):
-
-#####Prediction
-
-
-#####Output String
+    
+    #####Prediction
+    
+    
+    #####Output String
     output = "output"
     return output
 
 def send_prediction(recipient_id , output):
-
+    
     bot.send_text_message(recipient_id , output)
 
 
@@ -196,7 +201,7 @@ def verify_fb_token(token_sent):
 
 def send_photo(recipient_id , response):
     bot.send_image_url(recipient_id , response)
-
+    
     return "Success"
 
 def send_message(recipient_id , response):
